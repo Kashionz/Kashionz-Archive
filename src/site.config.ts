@@ -91,6 +91,12 @@ export const theme: ThemeUserConfig = {
   }
 }
 
+// Waline production setup:
+// 1) Set PUBLIC_WALINE_SERVER in your deployment environment.
+// 2) Optional: set PUBLIC_WALINE_ENABLE=false to force-disable.
+const walineServer = (import.meta.env.PUBLIC_WALINE_SERVER || '').trim()
+const walineEnable = walineServer.length > 0 && import.meta.env.PUBLIC_WALINE_ENABLE !== 'false'
+
 export const integ: IntegrationUserConfig = {
   // [Links]
   // https://astro-pure.js.org/docs/integrations/links
@@ -145,10 +151,10 @@ export const integ: IntegrationUserConfig = {
   },
   // Comment system
   waline: {
-    // 建議先關閉，等你有自己的 Waline 服務後再開啟
-    enable: false,
-    // Server service link
-    server: 'https://astro-theme-pure-waline.arthals.ink/',
+    // Set PUBLIC_WALINE_SERVER to your own Waline domain before going live.
+    enable: walineEnable,
+    // Example: https://waline.your-domain.com
+    server: walineServer,
     // Show meta info for comments
     showMeta: false,
     // Refer https://waline.js.org/en/guide/features/emoji.html
