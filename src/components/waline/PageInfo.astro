@@ -27,4 +27,4 @@ const path = Astro.url.pathname
   }
 </div>
 
-{view && !comment && <Pageview />}
+{(view || comment) && <Pageview />}

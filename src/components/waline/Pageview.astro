@@ -9,14 +9,43 @@ import config from '@/site-config'
   data-astro-rerun
   define:vars={{ npmCDN: config.npmCDN, walineServer: config.integ.waline.server }}
 >
+  const PAGEVIEW_SESSION_MS = 30 * 60 * 1000
+  const PAGEVIEW_STORAGE_PREFIX = 'waline-pageview:'
+
+  function normalizePath(path) {
+    if (!path || path === '/') return '/'
+    return path.replace(/\/+$/, '') || '/'
+  }
+
+  function shouldUpdatePageview(path) {
+    try {
+      const storageKey = `${PAGEVIEW_STORAGE_PREFIX}${path}`
+      const currentTime = Date.now()
+      const lastTrackedAt = Number(localStorage.getItem(storageKey) || '0')
+
+      if (Number.isFinite(lastTrackedAt) && currentTime - lastTrackedAt < PAGEVIEW_SESSION_MS) {
+        return false
+      }
+
+      localStorage.setItem(storageKey, String(currentTime))
+      return true
+    } catch {
+      // Fallback to Waline's default behavior if storage is unavailable.
+      return true
+    }
+  }
+
   async function loadPageview() {
     try {
       const pageview = await import(`${npmCDN}/@waline/client@v3/dist/pageview.js`)
       const el = document.querySelector('.waline-pageview-count')
       if (el) {
+        const path = normalizePath(el.getAttribute('data-path') || window.location.pathname)
+
         pageview.pageviewCount({
           serverURL: walineServer,
-          path: window.location.pathname
+          path,
+          update: shouldUpdatePageview(path)
         })
       }
     } catch (e) {

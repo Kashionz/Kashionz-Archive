@@ -41,13 +41,16 @@ const { class: className } = Astro.props
       const emoji = walineConfig.emoji?.map(
         (preset) => `${config.npmCDN}/@waline/emojis@1.2.0/${preset}` as WalineEmojiPresets
       )
+      const additionalConfigs = walineConfig.additionalConfigs ?? {}
 
       walineInit({
         el: 'comment-component #waline',
         serverURL: walineConfig.server || '',
         emoji,
         reaction: ['/icons/heart-item.svg'],
-        ...walineConfig.additionalConfigs
+        ...additionalConfigs,
+        comment: additionalConfigs.comment ?? true,
+        pageview: false
       })
     }
   }
