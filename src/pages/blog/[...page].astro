@@ -5,6 +5,7 @@ import type { CollectionEntry } from 'astro:content'
 import { Paginator, PostPreview } from 'astro-pure/components/pages'
 import { getBlogCollection, sortMDByDate } from 'astro-pure/server'
 import { Button } from 'astro-pure/user'
+import { getBlogCategoryLabel } from '../../data/blog-categories'
 import PageLayout from '@/layouts/BaseLayout.astro'
 import config from '@/site-config'
 
@@ -52,6 +53,10 @@ const paginationProps = {
   <main class='mt-6 lg:mt-10'>
     <div id='content-header' class='animate'>
       <h1 class='mb-6 mt-6 text-3xl font-medium sm:mt-10'>Blog</h1>
+      <div class='mb-6 flex flex-wrap gap-3'>
+        <Button title='Categories' href='/categories' />
+        <Button title='Tags' href='/tags' />
+      </div>
     </div>
     {
       page.data.length === 0 ? (
@@ -67,7 +72,12 @@ const paginationProps = {
           {/* posts */}
           <ul class='flex flex-col gap-y-4 text-start'>
             {page.data.map((post) => (
-              <PostPreview {post} detailed />
+              <PostPreview
+                {post}
+                detailed
+                categoryLabel={getBlogCategoryLabel(post.data.category)}
+                categoryHref={`/categories/${post.data.category}`}
+              />
             ))}
           </ul>
           <Paginator {...paginationProps} />

@@ -1,14 +1,17 @@
 ---
+import type { CollectionEntry } from 'astro:content'
+
 import { PostPreview } from 'astro-pure/components/pages'
 import { getBlogCollection, groupCollectionsByYear, sortMDByDate } from 'astro-pure/server'
 import { Button } from 'astro-pure/user'
+import { getBlogCategoryLabel } from '../../data/blog-categories'
 import PageLayout from '@/layouts/BaseLayout.astro'
 
 export const prerender = true
 
-const allPosts = await getBlogCollection()
-const allPostsByDate = sortMDByDate(allPosts)
-const allPostsByYear = groupCollectionsByYear(allPostsByDate)
+const allPosts = (await getBlogCollection()) as CollectionEntry<'blog'>[]
+const allPostsByDate = sortMDByDate(allPosts) as CollectionEntry<'blog'>[]
+const allPostsByYear = groupCollectionsByYear(allPostsByDate) as [number, CollectionEntry<'blog'>[]][]
 
 const meta = {
   description: 'A list of all the years of creating my posts',
@@ -41,7 +44,12 @@ const meta = {
             </p>
             <ul class='flex flex-col text-start'>
               {posts.map((p) => (
-                <PostPreview post={p} class='border-0 bg-transparent py-2' />
+                <PostPreview
+                  post={p}
+                  class='border-0 bg-transparent py-2'
+                  categoryLabel={getBlogCategoryLabel(p.data.category)}
+                  categoryHref={`/categories/${p.data.category}`}
+                />
               ))}
             </ul>
           </div>

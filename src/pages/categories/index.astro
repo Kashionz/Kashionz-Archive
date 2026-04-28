@@ -1,0 +1,57 @@
+---
+import type { CollectionEntry } from 'astro:content'
+
+import { getBlogCollection } from 'astro-pure/server'
+import { Button } from 'astro-pure/user'
+import PageLayout from '@/layouts/BaseLayout.astro'
+import {
+  blogCategories,
+  getBlogCategoryCount
+} from '../../data/blog-categories'
+
+const allPosts = (await getBlogCollection()) as CollectionEntry<'blog'>[]
+
+const meta = {
+  description: 'A list of all the categories I use to organize my posts',
+  title: 'Categories'
+}
+---
+
+<PageLayout {meta}>
+  <Button title='Back' href='/blog' variant='back' />
+  <main class='mt-6 lg:mt-10'>
+    <div id='content-header' class='animate'>
+      <h1 class='mb-6 text-3xl font-medium'>Categories</h1>
+    </div>
+
+    <div id='content' class='animate'>
+      <ul class='grid gap-4 sm:grid-cols-2'>
+        {
+          blogCategories.map((category) => {
+            const count = getBlogCategoryCount(allPosts, category.slug)
+
+            return (
+              <li>
+                <a
+                  href={`/categories/${category.slug}`}
+                  data-astro-prefetch
+                  class='block rounded-xl border bg-background px-4 py-4 no-underline transition-colors hover:bg-muted hover:text-primary'
+                >
+                  <div class='flex items-start justify-between gap-3'>
+                    <div class='flex flex-col gap-1'>
+                      <span class='text-lg font-medium text-foreground'>{category.label}</span>
+                      <span class='text-sm text-muted-foreground'>{category.slug}</span>
+                    </div>
+                    <span class='rounded-full border bg-muted px-2 py-1 text-xs text-muted-foreground'>
+                      {count}
+                    </span>
+                  </div>
+                </a>
+              </li>
+            )
+          })
+        }
+      </ul>
+    </div>
+  </main>
+</PageLayout>

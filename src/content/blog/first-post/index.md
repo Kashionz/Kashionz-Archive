@@ -2,6 +2,10 @@
 title: 第一篇文章
 publishDate: 2026-04-23 12:03:12
 description: The first post.
+<<<<<<< HEAD
+=======
+category: life
+>>>>>>> 70fa5b2 (feat: add categories function.)
 tags:
   - Daily
 language: 中文

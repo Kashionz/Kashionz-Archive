@@ -9,9 +9,11 @@ type Props<T extends CollectionKey> = {
   post: CollectionEntry<T>
   detailed?: boolean
   class?: string
+  categoryLabel?: string
+  categoryHref?: string
 }
 
-const { post, detailed = false, class: className } = Astro.props
+const { post, detailed = false, class: className, categoryLabel, categoryHref } = Astro.props
 const { id, data } = post
 const { remarkPluginFrontmatter } = await render(post)
 const postDate = data.updatedDate ?? data.publishDate
@@ -24,15 +26,19 @@ const postDate = data.updatedDate ?? data.publishDate
     `--preview-highlight:color-mix(in srgb,${data.heroImage.color} 40%,hsl(var(--foreground)/var(--un-text-opacity,1)));
     --preview-highlight-bg:hsl(from ${data.heroImage.color} h s l/20%)`}
 >
-  <a
+  <div
     class={cn(
       'block w-full relative group rounded-2xl border bg-background transition-colors ease-in-out px-5 py-2.5 hover:bg-muted hover:text-primary',
       detailed && 'max-sm:px-4 sm:py-5',
       detailed && data.heroImage && 'max-md:pt-24'
     )}
-    href={`/blog/${id}`}
-    data-astro-prefetch
   >
+    <a
+      href={`/blog/${id}`}
+      data-astro-prefetch
+      aria-label={data.title}
+      class='absolute inset-0 z-10 rounded-2xl'
+    />
     {
       detailed && data.heroImage && (
         <Image
@@ -44,10 +50,27 @@ const postDate = data.updatedDate ?? data.publishDate
       )
     }
     <div
-      class={cn('relative flex flex-col gap-1', !detailed && 'sm:flex-row sm:items-center')}
+      class={cn(
+        'relative z-20 pointer-events-none flex flex-col gap-1',
+        !detailed && 'sm:flex-row sm:items-center'
+      )}
       style='z-index:1'
     >
-      <FormattedDate class='min-w-[95px] text-xs' date={postDate} />
+      <div class='flex flex-wrap items-center gap-2'>
+        <FormattedDate class='min-w-[95px] text-xs' date={postDate} />
+        {
+          categoryLabel &&
+            categoryHref && (
+              <a
+                href={categoryHref}
+                data-astro-prefetch
+                class='pointer-events-auto inline-flex items-center rounded-full border bg-muted px-2 py-0.5 text-xs text-muted-foreground no-underline transition-colors hover:bg-card hover:text-primary'
+              >
+                {categoryLabel}
+              </a>
+            )
+        }
+      </div>
 
       {/* title */}
       <div class='flex justify-between flex-grow'>
@@ -107,7 +130,7 @@ const postDate = data.updatedDate ?? data.publishDate
         )
       }
     </div>
-  </a>
+  </div>
 
   <style>
     .post-preview {
@@ -115,13 +138,13 @@ const postDate = data.updatedDate ?? data.publishDate
       );
     }
     .post-preview:hover {
-      & > a {
+      & > div {
         background-color: var( --preview-highlight-bg, hsl(var(--muted) / var(--un-bg-opacity, 1))) !important;
       }
-      & > a {
+      & > div {
         color: var(--preview-highlight-final) !important;
       }
-      & > a .preview-redirect {
+      & > div .preview-redirect {
         stroke: var(--preview-highlight-final) !important;
       }
     }

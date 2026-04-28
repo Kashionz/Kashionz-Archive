@@ -11,6 +11,10 @@ const bodyText = lang === "中文" ? "在這裡撰寫文章內容。" : "Write y
 tR += `title: "${tp.file.title}"
 publishDate: "${tp.date.now('YYYY-MM-DD HH:mm:ss')}"
 description: "${description}"
+<<<<<<< HEAD
+=======
+category: tech
+>>>>>>> 70fa5b2 (feat: add categories function.)
 tags:
   - Markdown
 language: "${lang}"

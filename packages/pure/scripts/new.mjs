@@ -116,7 +116,8 @@ description: 'Write your description here.'
 publishDate: '${getDate()}'
 `
   content += parsedArgs.draft ? 'draft: true\n' : ''
-  content += parsedArgs.lang ? `lang: ${parsedArgs.lang}\n` : ''
+  content += 'category: tech\n'
+  content += parsedArgs.lang ? `language: ${parsedArgs.lang}\n` : ''
   content += `tags:
   - Example
   - Technology

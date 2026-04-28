@@ -2,6 +2,10 @@
 title: <% tp.file.title %>
 publishDate: <% tp.date.now('YYYY-MM-DD HH:mm:ss') %>
 description: Markdown is a lightweight markup language.
+<<<<<<< HEAD
+=======
+category: tech
+>>>>>>> 70fa5b2 (feat: add categories function.)
 tags:
   - Markdown
 language: English

@@ -1,5 +1,6 @@
 import { glob } from 'astro/loaders'
 import { defineCollection, z } from 'astro:content'
+import { blogCategorySlugs } from './data/blog-categories'
 
 function removeDupsAndLowerCase(array: string[]) {
   if (!array.length) return array
@@ -32,6 +33,7 @@ const blog = defineCollection({
           color: z.string().optional()
         })
         .optional(),
+      category: z.enum(blogCategorySlugs as [string, ...string[]]),
       tags: z.array(z.string()).default([]).transform(removeDupsAndLowerCase),
       language: z.string().optional(),
       draft: z.boolean().default(false),
